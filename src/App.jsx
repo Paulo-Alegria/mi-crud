@@ -8,20 +8,20 @@ function App() {
   const [itemToEdit, setItemToEdit] = useState(null);
 
   useEffect(() => {
-    const storedItems = JSON.parse(localStorage.getItem('items')) || [];
+    const storedItems = JSON.parse(localStorage.getItem('evaluaciones')) || [];
     setItems(storedItems);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('items', JSON.stringify(items));
+    localStorage.setItem('evaluaciones', JSON.stringify(items));
   }, [items]);
 
-  const addOrUpdateItem = (value) => {
+  const addOrUpdateItem = (item) => {
     if (itemToEdit) {
-      setItems(items.map(item => item.id === itemToEdit.id ? { ...item, value } : item));
+      setItems(items.map(i => i.id === itemToEdit.id ? { ...item, id: itemToEdit.id } : i));
       setItemToEdit(null);
     } else {
-      setItems([...items, { id: Date.now(), value }]);
+      setItems([...items, { ...item, id: Date.now() }]);
     }
   };
 
@@ -29,17 +29,25 @@ function App() {
     setItems(items.filter(item => item.id !== id));
   };
 
-  const editItem = (item) => {
-    setItemToEdit(item);
+  const editItem = (id) => {
+    const found = items.find(item => item.id === id);
+    setItemToEdit(found);
   };
 
   return (
-    <div className="App">
-      <h1>Mi CRUD con LocalStorage</h1>
-      <Form
-        addOrUpdateItem={addOrUpdateItem}
-        itemToEdit={itemToEdit}/>
-      <List items={items} deleteItem={deleteItem} editItem={editItem} />
+    <div className="app">
+      <div className="form-container">
+        <h2>Editar Evaluación</h2>
+        <Form addOrUpdateItem={addOrUpdateItem} itemToEdit={itemToEdit} />
+      </div>
+      <div className="list-container">
+        <h3>Evaluaciones Guardadas</h3>
+        {items.length === 0 ? (
+          <p className="empty-msg">No hay evaluaciones guardadas aún. ¡Agrega una!</p>
+        ) : (
+          <List items={items} deleteItem={deleteItem} editItem={editItem} />
+        )}
+      </div>
     </div>
   );
 }
