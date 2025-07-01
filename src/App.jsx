@@ -1,16 +1,14 @@
-import { useState, useEffect } from 'react'
-import Form from './components/Form'
-import List from './components/List'
-import './App.css'
+import { useState, useEffect } from 'react';
+import Form from './components/Form';
+import List from './components/List';
+import './App.css';
 
 function App() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(() => {
+    const storedItems = localStorage.getItem('evaluaciones');
+    return storedItems ? JSON.parse(storedItems) : [];
+  });
   const [itemToEdit, setItemToEdit] = useState(null);
-
-  useEffect(() => {
-    const storedItems = JSON.parse(localStorage.getItem('evaluaciones')) || [];
-    setItems(storedItems);
-  }, []);
 
   useEffect(() => {
     localStorage.setItem('evaluaciones', JSON.stringify(items));
